@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | Data Science Logs</title>
+    <meta name="description" content="Reach out anonymously with feedback, resource suggestions, or technical questions.">
+    <link rel="canonical" href="https://datascience-logs.github.io/contact.html">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                DS<span>.Logs</span>
+            </a>
+            <button class="menu-toggle" aria-label="Toggle Navigation" id="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="nav-links" id="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="resources.html">Resources</a>
+                <a href="logs.html">Logs</a>
+                <a href="contact.html" class="active">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <div class="container">
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <h1>Get in Touch</h1>
+                    <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+                        Have a resource suggestion or a technical question? Use the form below. Your privacy is prioritized; no identifying data is required beyond a return email if you wish for a response.
+                    </p>
+
+                    <form action="https://formspree.io/f/placeholder" method="POST" id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Preferred Alias (Optional)</label>
+                            <input type="text" id="name" name="name" placeholder="e.g. DataEnthusiast_42">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Contact Email (Optional)</label>
+                            <input type="email" id="email" name="email" placeholder="email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="6" required placeholder="Share your thoughts or questions..."></textarea>
+                        </div>
+                        <div style="margin-bottom: var(--spacing-md); font-size: 0.875rem; color: var(--text-secondary);">
+                            <p>🔒 <strong>Privacy Disclaimer:</strong> By submitting this form, you acknowledge that this information is sent via a third-party service (Formspree/EmailJS). No data is stored on our servers.</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                    </form>
+                    <div id="form-status" style="margin-top: var(--spacing-md); text-align: center; display: none;"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-logo">DS<span>.Logs</span></div>
+                    <p style="opacity: 0.8;">An anonymous project dedicated to open-source data science education.</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--white); margin-bottom: var(--spacing-md);">Quick Links</h4>
+                    <ul style="opacity: 0.8; line-height: 2;">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="resources.html">Resources</a></li>
+                        <li><a href="logs.html">Learning Logs</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: var(--white); margin-bottom: var(--spacing-md);">Our Hubs</h4>
+                    <ul style="opacity: 0.8; line-height: 2; font-size: 0.875rem;">
+                        <li>links.datascience.logs</li>
+                        <li>resources.datascience.logs</li>
+                        <li>blog.datascience.logs</li>
+                        <li>projects.datascience.logs</li>
+                        <li>contact.datascience.logs</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2024 Data Science Logs.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
