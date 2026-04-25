@@ -1,11 +1,22 @@
-# Ignore Antigravity/Claude metadata
+# 1. Ignore everything by default
+/*
+
+# 2. Allow specific folders and files (Whitelist)
+!/admin/
+!/css/
+!/data/
+!/js/
+!/index.html
+!/ds.log.jpg
+!/robots.txt
+!/sitemap.xml
+!/.nojekyll
+!/.gitignore
+
+# 3. Explicitly ignore sensitive/metadata folders just in case
 .agent/
 .claude/
 .gemini/
-
-# Ignore other subfolders
 superpowers/
-
-# OS files
+node_modules/
 .DS_Store
-Thumbs.db
