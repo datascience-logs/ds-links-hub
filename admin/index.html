@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Portal | Data Science Logs</title>
+    <title>Control Panel | Data Science Logs Hub</title>
 
-    <!-- 1. Decap CMS Config -->
+    <!-- Decap CMS Config -->
     <script>
         window.CMS_CONFIG = {
             backend: {
@@ -14,21 +14,62 @@
                 branch: 'main'
             },
             local_backend: true,
-            display_url: "https://datascience-logs.github.io",
-            logo_url: "ds.log.jpg",
+            display_url: "https://datascience-logs.github.io/ds-links-hub/",
+            site_url: "https://datascience-logs.github.io/ds-links-hub/",
+            logo_url: "../ds.log.jpg",
+            
+            // The "Control Panel" Structure
             collections: [
                 {
                     name: "links_data",
-                    label: "Manage Links",
-                    file: "data/links.json",
-                    fields: [
-                        { label: "Links List", name: "links", widget: "list", fields: [
-                            { label: "Title", name: "title", widget: "string" },
-                            { label: "URL", name: "url", widget: "string" },
-                            { label: "Description", name: "description", widget: "string", required: false },
-                            { label: "Active", name: "isActive", widget: "boolean", default: true },
-                            { label: "Order", name: "order", widget: "number", default: 10 }
-                        ]}
+                    label: "🔗 Link Management",
+                    delete: true,
+                    editor: { preview: false },
+                    files: [
+                        {
+                            name: "links",
+                            label: "Main Links List",
+                            file: "data/links.json",
+                            fields: [
+                                {
+                                    label: "Active Links",
+                                    name: "links",
+                                    widget: "list",
+                                    allow_add: true,
+                                    summary: "{{title}} ({{url}})",
+                                    fields: [
+                                        { label: "Link Title", name: "title", widget: "string", hint: "Example: My Twitter" },
+                                        { label: "URL Path", name: "url", widget: "string", hint: "https://..." },
+                                        { label: "Description", name: "description", widget: "string", required: false },
+                                        { 
+                                            label: "Visual Icon", 
+                                            name: "icon", 
+                                            widget: "select", 
+                                            options: ["github", "instagram", "youtube", "linkedin", "twitter", "x", "discord", "email", "blog", "portfolio", "website", "default"],
+                                            default: "default"
+                                        },
+                                        { label: "Visible on Site", name: "isActive", widget: "boolean", default: true },
+                                        { label: "Display Rank", name: "order", widget: "number", default: 10 }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "settings",
+                    label: "⚙️ Site Settings",
+                    files: [
+                        {
+                            name: "general",
+                            label: "Basic Info",
+                            file: "data/settings.json",
+                            fields: [
+                                { label: "Brand Name", name: "site_name", widget: "string", default: "Data Science Logs" },
+                                { label: "Global Bio", name: "site_description", widget: "text" },
+                                { label: "Instagram Link", name: "instagram", widget: "string" }
+                            ]
+                        }
                     ]
                 }
             ]
@@ -36,41 +77,42 @@
     </script>
 
     <style>
-        /* Premium Dark Admin Theme */
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@700&display=swap');
-
+        /* Modern Pro Dashboard Styling */
         :root {
             --orange: #FF6B35;
             --navy: #0A1929;
-            --navy-light: #0D1B2A;
-            --navy-elevated: #152238;
             --white: #FFFFFF;
         }
 
-        body { font-family: 'DM Sans', sans-serif; background-color: var(--navy); }
-
-        /* Login Screen Customization */
-        .login-screen {
-            background: var(--navy) !important;
-            background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 107, 53, 0.15), transparent) !important;
+        /* Customize Decap CMS UI */
+        .nc-app-header {
+            background-color: var(--navy) !important;
+            border-bottom: 2px solid var(--orange) !important;
         }
 
-        .login-container {
-            background: var(--navy-light) !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
-            border-radius: 16px !important;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5) !important;
+        .nc-app-header-logo {
+            font-weight: 800 !important;
+            letter-spacing: -1px !important;
+            color: var(--orange) !important;
         }
 
-        .login-button {
+        .nc-sidebar-link-active {
+            background-color: rgba(255, 107, 53, 0.1) !important;
+            border-left: 4px solid var(--orange) !important;
+            color: var(--orange) !important;
+        }
+
+        /* "Best Button" Effects */
+        .nc-ui-btn-primary {
             background: var(--orange) !important;
             border-radius: 8px !important;
-            font-weight: 600 !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3) !important;
+            transition: all 0.2s ease !important;
         }
 
-        /* Dash Overlay */
-        .cms-root {
-            font-family: 'DM Sans', sans-serif !important;
+        .nc-ui-btn-primary:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5) !important;
         }
     </style>
 </head>

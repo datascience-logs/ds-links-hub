@@ -4,7 +4,7 @@
 # 2. Allow specific folders and files (Whitelist)
 !/admin/
 !/css/
-!/data/
+!/data/ 
 !/js/
 !/index.html
 !/ds.log.jpg
