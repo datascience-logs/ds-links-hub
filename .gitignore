@@ -1,0 +1,11 @@
+# Ignore Antigravity/Claude metadata
+.agent/
+.claude/
+.gemini/
+
+# Ignore other subfolders
+superpowers/
+
+# OS files
+.DS_Store
+Thumbs.db
