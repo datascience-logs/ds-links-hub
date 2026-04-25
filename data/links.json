@@ -1,0 +1,74 @@
+{
+  "links": [
+    {
+      "title": "GitHub",
+      "url": "https://github.com/datascience-logs",
+      "description": "Explore my open-source projects",
+      "isActive": true,
+      "order": 1
+    },
+    {
+      "title": "Main Website",
+      "url": "https://datascience-logs.github.io",
+      "description": "Resources, logs & learning journey",
+      "isActive": true,
+      "order": 2
+    },
+    {
+      "title": "Resources Hub",
+      "url": "https://datascience-logs.github.io/resources.html",
+      "description": "Curated Python, SQL & ML resources",
+      "isActive": true,
+      "order": 3
+    },
+    {
+      "title": "Learning Logs",
+      "url": "https://datascience-logs.github.io/logs.html",
+      "description": "Weekly documented learning journey",
+      "isActive": true,
+      "order": 4
+    },
+    {
+      "title": "Follow on X",
+      "url": "https://twitter.com/datascience_logs",
+      "description": "Daily tips & insights",
+      "isActive": true,
+      "order": 5
+    },
+    {
+      "title": "Instagram",
+      "url": "https://instagram.com/datascience_logs",
+      "description": "Behind the scenes & updates",
+      "isActive": true,
+      "order": 6
+    },
+    {
+      "title": "YouTube",
+      "url": "https://youtube.com/@datascience-logs",
+      "description": "Video tutorials & demos",
+      "isActive": true,
+      "order": 7
+    },
+    {
+      "title": "LinkedIn",
+      "url": "https://linkedin.com/in/datascience-logs",
+      "description": "Let's connect professionally",
+      "isActive": true,
+      "order": 8
+    },
+    {
+      "title": "Join Discord",
+      "url": "https://discord.gg/datascience-logs",
+      "description": "Community of learners",
+      "isActive": true,
+      "order": 9
+    },
+    {
+      "title": "Contact Me",
+      "url": "mailto:hello@datascience.logs",
+      "description": "Questions? Just reach out",
+      "isActive": true,
+      "order": 10
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Disallow admin access
+Disallow: /admin/
+Disallow: /assets/uploads/

@@ -1,0 +1,44 @@
+backend:
+  name: github
+  repo: datascience-logs/ds-links-hub
+  branch: main
+
+local_backend: true
+
+# Media folder
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+# Collections
+collections:
+  - name: "config"
+    label: "Configuration"
+    files:
+      - name: "links_data"
+        label: "Manage Links"
+        file: "data/links.json"
+        fields:
+          - name: "links"
+            label: "All Links"
+            widget: "list"
+            summary: "{{title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string", required: true }
+              - { label: "URL", name: "url", widget: "string", required: true, pattern: ["^https?://", "URL must start with http:// or https://"] }
+              - { label: "Description", name: "description", widget: "string", required: false }
+              - { label: "Active", name: "isActive", widget: "boolean", default: true }
+              - { label: "Order", name: "order", widget: "number", required: true, default: 10 }
+
+      - name: "site_settings"
+        label: "General Settings"
+        file: "_data/settings.json"
+        fields:
+          - { label: "Site Name", name: "site_name", widget: "string", default: "Data Science Logs" }
+          - { label: "Site Description", name: "site_description", widget: "text", default: "Documenting the journey from zero to ML engineer." }
+          - { label: "Instagram", name: "instagram", widget: "string", required: false }
+
+# Editorial workflow (Disable for simple GitHub backend setup if preferred)
+publish_mode: simple
+
+# Custom paths
+show_preview_links: false
