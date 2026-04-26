@@ -1,0 +1,18 @@
+{
+  "accounts": [
+    {
+      "email": "admin@hotmail.com",
+      "username": "admin",
+      "password": "",
+      "description": "Primary administrative account",
+      "isActive": true
+    },
+    {
+      "email": "support@hotmail.com",
+      "username": "support",
+      "password": "",
+      "description": "Support team account",
+      "isActive": true
+    }
+  ]
+}

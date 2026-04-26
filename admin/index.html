@@ -3,120 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Panel | Data Science Logs Hub</title>
-
-    <!-- Decap CMS Config -->
-    <script>
-        window.CMS_CONFIG = {
-            backend: {
-                name: 'github',
-                repo: 'datascience-logs/ds-links-hub',
-                branch: 'main'
-            },
-            local_backend: true,
-            display_url: "https://datascience-logs.github.io/ds-links-hub/",
-            site_url: "https://datascience-logs.github.io/ds-links-hub/",
-            logo_url: "../ds.log.jpg",
-            
-            // The "Control Panel" Structure
-            collections: [
-                {
-                    name: "links_data",
-                    label: "🔗 Link Management",
-                    delete: true,
-                    editor: { preview: false },
-                    files: [
-                        {
-                            name: "links",
-                            label: "Main Links List",
-                            file: "data/links.json",
-                            fields: [
-                                {
-                                    label: "Active Links",
-                                    name: "links",
-                                    widget: "list",
-                                    allow_add: true,
-                                    summary: "{{title}} ({{url}})",
-                                    fields: [
-                                        { label: "Link Title", name: "title", widget: "string", hint: "Example: My Twitter" },
-                                        { label: "URL Path", name: "url", widget: "string", hint: "https://..." },
-                                        { label: "Description", name: "description", widget: "string", required: false },
-                                        { 
-                                            label: "Visual Icon", 
-                                            name: "icon", 
-                                            widget: "select", 
-                                            options: ["github", "instagram", "youtube", "linkedin", "twitter", "x", "discord", "email", "blog", "portfolio", "website", "default"],
-                                            default: "default"
-                                        },
-                                        { label: "Visible on Site", name: "isActive", widget: "boolean", default: true },
-                                        { label: "Display Rank", name: "order", widget: "number", default: 10 }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    name: "settings",
-                    label: "⚙️ Site Settings",
-                    files: [
-                        {
-                            name: "general",
-                            label: "Basic Info",
-                            file: "data/settings.json",
-                            fields: [
-                                { label: "Brand Name", name: "site_name", widget: "string", default: "Data Science Logs" },
-                                { label: "Global Bio", name: "site_description", widget: "text" },
-                                { label: "Instagram Link", name: "instagram", widget: "string" }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        };
-    </script>
-
+    <title>Master Hub | Data Science Diaries</title>
+    <link rel="stylesheet" href="../css/style.css">
     <style>
-        /* Modern Pro Dashboard Styling */
         :root {
             --orange: #FF6B35;
             --navy: #0A1929;
+            --navy-light: #152238;
             --white: #FFFFFF;
         }
 
-        /* Customize Decap CMS UI */
-        .nc-app-header {
-            background-color: var(--navy) !important;
-            border-bottom: 2px solid var(--orange) !important;
+        body {
+            background-color: var(--navy);
+            color: var(--white);
+            font-family: 'Inter', system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .nc-app-header-logo {
-            font-weight: 800 !important;
-            letter-spacing: -1px !important;
-            color: var(--orange) !important;
+        /* Lock Screen */
+        #lock-screen {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            background: var(--navy-light);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
 
-        .nc-sidebar-link-active {
-            background-color: rgba(255, 107, 53, 0.1) !important;
-            border-left: 4px solid var(--orange) !important;
-            color: var(--orange) !important;
+        .logo-img { width: 120px; border-radius: 50%; margin-bottom: 20px; border: 2px solid var(--orange); }
+
+        /* Dashboard (Hidden by default) */
+        #dashboard {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+            margin: 20px;
+            align-self: flex-start;
         }
 
-        /* "Best Button" Effects */
-        .nc-ui-btn-primary {
-            background: var(--orange) !important;
-            border-radius: 8px !important;
-            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3) !important;
-            transition: all 0.2s ease !important;
+        .card {
+            background: var(--navy-light);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,107,53, 0.2);
         }
 
-        .nc-ui-btn-primary:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5) !important;
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn {
+            background: rgba(255,255,255,0.05);
+            border: none;
+            color: #888;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
         }
+        .tab-btn.active { background: var(--orange); color: white; }
+
+        .input {
+            width: 100%;
+            background: #0d1b2a;
+            border: 1px solid #2a3e52;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            background: var(--orange);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover { background: #ff8555; transform: translateY(-2px); }
+
+        .item-row {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .delete-ico { position: absolute; top: -10px; right: -10px; background: #ff4a4a; color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 12px; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
 </head>
 <body>
-    <script src="https://unpkg.com/decap-cms@^3.1.0/dist/decap-cms.js"></script>
+
+    <!-- SECURE LOCK SCREEN -->
+    <div id="lock-screen">
+        <img src="../ds.log.jpg" class="logo-img">
+        <h2 style="margin-bottom: 10px;">Master Hub Access</h2>
+        <p style="color: #888; font-size: 0.9rem; margin-bottom: 25px;">Enter your Secret Access Key to unlock site controls.</p>
+        <input type="password" id="secret-key" class="input" placeholder="Enter Secret Key...">
+        <button class="btn" onclick="tryUnlock()" style="width: 100%;">Unlock Dashboard</button>
+        <p id="lock-error" style="color: #ff4a4a; margin-top: 15px; font-size: 0.8rem; display: none;">Invalid Token / Access Denied</p>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1>🛡️ Data Science Diaries Control</h1>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="background: transparent; border: 1px solid var(--orange);" onclick="addItem()">+ Add Item</button>
+                <button class="btn" onclick="saveToCloud()">💾 Commit Changes</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('links')">🔗 Links Hub</button>
+            <button class="tab-btn" onclick="switchTab('army')">🎖️ Army Panel</button>
+            <button class="tab-btn" onclick="switchTab('hotmail')">📧 Email Lists</button>
+            <button class="tab-btn" onclick="switchTab('settings')">⚙️ Settings</button>
+        </div>
+
+        <div class="card">
+            <div id="tab-links" class="tab-content active"></div>
+            <div id="tab-army" class="tab-content"></div>
+            <div id="tab-hotmail" class="tab-content"></div>
+            <div id="tab-settings" class="tab-content">
+                <h3>Branding</h3>
+                <label>Brand Name</label>
+                <input class="input" id="setting-name" value="Data Science Diaries">
+                <label>Handle</label>
+                <input class="input" id="setting-handle" value="@datascience.diaries.in">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let db = { links: [], army: [], hotmail: [] };
+        const REPO = "datascience-logs/ds-links-hub";
+        let activeTab = 'links';
+        let secureKey = localStorage.getItem('master_hub_key');
+
+        if (secureKey) tryUnlock();
+
+        async function tryUnlock() {
+            const key = document.getElementById('secret-key').value || secureKey;
+            if (!key) return;
+
+            // Simple validation: Try to fetch repo info
+            try {
+                const res = await fetch(`https://api.github.com/repos/${REPO}`, {
+                    headers: { 'Authorization': `token ${key}` }
+                });
+                if (!res.ok) throw new Error();
+                
+                secureKey = key;
+                localStorage.setItem('master_hub_key', key);
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.body.style.alignItems = 'flex-start';
+                init();
+            } catch (e) { document.getElementById('lock-error').style.display = 'block'; }
+        }
+
+        async function init() {
+            await load('links', 'data/links.json');
+            await load('army', 'data/army.json');
+            await load('hotmail', 'data/hotmail.json');
+            render();
+        }
+
+        async function load(key, path) {
+            try {
+                const res = await fetch(`../${path}`);
+                const json = await res.json();
+                db[key] = json[key] || json;
+            } catch(e) { db[key] = []; }
+        }
+
+        function switchTab(t) {
+            activeTab = t;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(t)));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === `tab-${t}`));
+        }
+
+        function render() {
+            renderList('links', ['title', 'url', 'description']);
+            renderList('army', ['title', 'url', 'access_level']);
+            renderList('hotmail', ['email', 'username', 'password']);
+        }
+
+        function renderList(key, fields) {
+            const container = document.getElementById(`tab-${key}`);
+            container.innerHTML = '';
+            db[key].forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'item-row';
+                fields.forEach(f => {
+                    const input = document.createElement('input');
+                    input.className = 'input';
+                    input.placeholder = f;
+                    input.value = item[f] || '';
+                    input.onchange = (e) => db[key][idx][f] = e.target.value;
+                    row.appendChild(input);
+                });
+                row.innerHTML += `<button class="delete-ico" onclick="removeItem('${key}', ${idx})">✕</button>`;
+                container.appendChild(row);
+            });
+        }
+
+        function addItem() {
+            const temp = {};
+            if (activeTab === 'links') Object.assign(temp, {title: 'New', url: 'https://'});
+            if (activeTab === 'army') Object.assign(temp, {title: 'New', url: 'https://', access_level: 'Public'});
+            if (activeTab === 'hotmail') Object.assign(temp, {email: '', username: '', password: ''});
+            if (temp.title !== undefined || temp.email !== undefined) {
+                db[activeTab].unshift(temp);
+                render();
+            }
+        }
+
+        function removeItem(key, idx) { db[key].splice(idx, 1); render(); }
+
+        async function saveToCloud() {
+            const paths = { links: 'data/links.json', army: 'data/army.json', hotmail: 'data/hotmail.json' };
+            const path = paths[activeTab];
+            if (!path) return;
+
+            try {
+                const infoRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+                    headers: { 'Authorization': `token ${secureKey}` }
+                });
+                const info = await infoRes.json();
+                
+                const content = btoa(JSON.stringify({ [activeTab]: db[activeTab] }, null, 2));
+                const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${secureKey}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: `Update ${activeTab} via Private Master Hub`,
+                        content: content,
+                        sha: info.sha,
+                        branch: 'main'
+                    })
+                });
+
+                if (res.ok) alert(`✅ ${activeTab} updated! Site will refresh in 1 min.`);
+                else alert("❌ Save failed: " + (await res.json()).message);
+            } catch(e) { alert("❌ Cloud Error"); }
+        }
+    </script>
 </body>
 </html>

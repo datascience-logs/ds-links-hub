@@ -29,6 +29,36 @@ collections:
               - { label: "Active", name: "isActive", widget: "boolean", default: true }
               - { label: "Order", name: "order", widget: "number", required: true, default: 10 }
 
+      - name: "army_panel"
+        label: "Army Panel"
+        file: "data/army.json"
+        fields:
+          - name: "resources"
+            label: "Army Resources"
+            widget: "list"
+            summary: "{{title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string", required: true }
+              - { label: "URL", name: "url", widget: "string", required: true, pattern: ["^https?://", "URL must start with http:// or https://"] }
+              - { label: "Description", name: "description", widget: "string", required: false }
+              - { label: "Access Level", name: "access_level", widget: "select", options: ["Public", "Restricted", "Confidential"], default: "Public" }
+              - { label: "Active", name: "isActive", widget: "boolean", default: true }
+
+      - name: "hotmail_panel"
+        label: "Hotmail Panel"
+        file: "data/hotmail.json"
+        fields:
+          - name: "accounts"
+            label: "Email Accounts"
+            widget: "list"
+            summary: "{{email}}"
+            fields:
+              - { label: "Email Address", name: "email", widget: "string", required: true }
+              - { label: "Username", name: "username", widget: "string", required: true }
+              - { label: "Password", name: "password", widget: "string", required: false }
+              - { label: "Description", name: "description", widget: "string", required: false }
+              - { label: "Active", name: "isActive", widget: "boolean", default: true }
+
       - name: "site_settings"
         label: "General Settings"
         file: "_data/settings.json"

@@ -1,0 +1,18 @@
+{
+  "resources": [
+    {
+      "title": "Army Documentation",
+      "url": "https://army.mil/docs",
+      "description": "Official Army documentation and resources",
+      "access_level": "Public",
+      "isActive": true
+    },
+    {
+      "title": "Training Materials",
+      "url": "https://army.mil/training",
+      "description": "Military training resources and courses",
+      "access_level": "Restricted",
+      "isActive": true
+    }
+  ]
+}
