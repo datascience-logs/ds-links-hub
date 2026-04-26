@@ -20,11 +20,13 @@
         .input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 4px var(--orange-glow); }
         .btn { background: var(--orange); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px var(--orange-glow); }
-        .link-editor-row { display: grid; grid-template-columns: 1.5fr 2fr 1fr 1fr auto; gap: 12px; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 16px; margin-bottom: 12px; align-items: end; border: 1px solid transparent; }
+        .link-editor-row { display: grid; grid-template-columns: 1.2fr 1.8fr 0.8fr 0.6fr 0.8fr auto; gap: 10px; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 16px; margin-bottom: 12px; align-items: end; border: 1px solid transparent; }
         .link-editor-row:hover { border-color: rgba(255,107,53, 0.3); }
-        .field-label { font-size: 0.7rem; color: var(--orange); font-weight: 800; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.05em; }
+        .field-label { font-size: 0.65rem; color: var(--orange); font-weight: 800; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.05em; }
         #toast { position: fixed; bottom: 32px; right: 32px; background: #10b981; color: white; padding: 16px 24px; border-radius: 12px; font-weight: 600; transform: translateY(100px); transition: 0.4s; z-index: 2000; }
         #toast.show { transform: translateY(0); }
+        .save-btn { background: #10b981; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
+        .save-btn:hover { background: #059669; }
     </style>
 </head>
 <body>
@@ -52,7 +54,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
                 <div>
                     <h1 style="margin: 0; font-size: 1.8rem;">Command Center</h1>
-                    <p style="color: var(--text-dim); margin-top: 4px;">Smart Auto-Generated Secret Codes</p>
+                    <p style="color: var(--text-dim); margin-top: 4px;">Manual Save Control Enabled</p>
                 </div>
                 <button class="btn" onclick="createNewLink()">+ Create New Link</button>
             </div>
@@ -67,9 +69,7 @@
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6c3ppZW1xa3JrdHh1cmR4cWJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNzg3NjgsImV4cCI6MjA5Mjc1NDc2OH0.pAjwSSdbpRzkqKALgg7q_XFT1-8aHLmp0kEljfy1RV0";
         let client;
 
-        function genCode() {
-            return "DS_" + Math.floor(1000 + Math.random() * 9000);
-        }
+        function genCode() { return "DS_" + Math.floor(1000 + Math.random() * 9000); }
 
         window.addEventListener('load', () => {
             if (window.supabase) {
@@ -91,46 +91,64 @@
             const e = document.getElementById('email').value;
             const p = document.getElementById('password').value;
             const { error } = await client.auth.signInWithPassword({ email: e, password: p });
-            if (error) {
-                const err = document.getElementById('error-msg');
-                err.innerText = error.message;
-                err.style.display = 'block';
-            } else { location.reload(); }
+            if (error) { alert(error.message); } else { location.reload(); }
         }
 
-        async function doLogout() {
-            await client.auth.signOut();
-            location.reload();
-        }
+        async function doLogout() { await client.auth.signOut(); location.reload(); }
 
         async function refreshLinks() {
             const { data } = await client.from('links').select('*').order('order', { ascending: true });
             const list = document.getElementById('links-container-admin');
             list.innerHTML = data.map(l => `
-                <div class="link-editor-row">
+                <div class="link-editor-row" id="row-${l.id}">
                     <div>
                         <span class="field-label">Title</span>
-                        <input class="input" value="${l.title || ''}" onchange="updateLink(${l.id}, 'title', this.value)">
+                        <input class="input" id="title-${l.id}" value="${l.title || ''}">
                     </div>
                     <div>
-                        <span class="field-label">Destination URL</span>
-                        <input class="input" id="url-${l.id}" value="${l.url || ''}" onchange="updateLink(${l.id}, 'url', this.value)">
+                        <span class="field-label">URL</span>
+                        <input class="input" id="url-${l.id}" value="${l.url || ''}">
                     </div>
                     <div>
-                        <span class="field-label">Secret Code</span>
-                        <div style="display:flex; gap:8px;">
-                            <input class="input" id="code-${l.id}" value="${l.code || ''}" onchange="updateLink(${l.id}, 'code', this.value)">
-                            <button onclick="magicCode(${l.id})" style="background:rgba(255,107,53,0.1); border:none; padding:10px; border-radius:8px; cursor:pointer;" title="Re-generate Code">✨</button>
+                        <span class="field-label">Code</span>
+                        <div style="display:flex; gap:4px;">
+                            <input class="input" id="code-${l.id}" value="${l.code || ''}">
+                            <button onclick="magicCode(${l.id})" style="background:rgba(255,107,53,0.1); border:none; padding:8px; border-radius:8px; cursor:pointer;">✨</button>
                         </div>
                     </div>
                     <div>
                         <span class="field-label">Media</span>
-                        <label style="background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:8px; cursor:pointer; font-size:0.7rem; display:block; border:1px dashed var(--border); text-align:center;" for="file-${l.id}">📎 PDF</label>
+                        <label style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; cursor:pointer; font-size:0.65rem; display:block; border:1px dashed var(--border); text-align:center;" for="file-${l.id}">📎 PDF</label>
                         <input type="file" id="file-${l.id}" accept=".pdf" style="display:none" onchange="uploadPDF(${l.id}, this)">
                     </div>
+                    <button class="save-btn" id="btn-${l.id}" onclick="saveRow(${l.id})">💾 SAVE</button>
                     <button onclick="killLink(${l.id})" style="color:#ef4444; background:none; border:none; cursor:pointer; padding-bottom:12px;">🗑️</button>
                 </div>
             `).join('');
+        }
+
+        async function saveRow(id) {
+            const btn = document.getElementById(`btn-${id}`);
+            const title = document.getElementById(`title-${id}`).value;
+            const url = document.getElementById(`url-${id}`).value;
+            const code = document.getElementById(`code-${id}`).value;
+            
+            btn.innerText = "WAIT...";
+            const { error } = await client.from('links').update({ title, url, code }).eq('id', id);
+            
+            if (!error) {
+                btn.innerText = "💾 SAVE";
+                showToast("Confirmed: Link Saved!");
+            } else {
+                alert(error.message);
+                btn.innerText = "ERROR";
+            }
+        }
+
+        async function magicCode(id) {
+            const newCode = genCode();
+            document.getElementById(`code-${id}`).value = newCode;
+            showToast("Magic Code ready. Click SAVE.");
         }
 
         async function uploadPDF(id, input) {
@@ -141,28 +159,14 @@
             const { data, error } = await client.storage.from('assets').upload(fileName, file);
             if (error) { alert(error.message); return; }
             const { data: { publicUrl } } = client.storage.from('assets').getPublicUrl(fileName);
-            await updateLink(id, 'url', publicUrl);
             document.getElementById(`url-${id}`).value = publicUrl;
-            showToast("PDF Linked!");
-        }
-
-        async function updateLink(id, field, value) {
-            await client.from('links').update({ [field]: value }).eq('id', id);
-            showToast("Saved!");
-        }
-
-        async function magicCode(id) {
-            const newCode = genCode();
-            await updateLink(id, 'code', newCode);
-            document.getElementById(`code-${id}`).value = newCode;
-            showToast("Magic Code Generated: " + newCode);
+            showToast("PDF Linked. Click SAVE.");
         }
 
         async function createNewLink() {
             const code = genCode();
-            await client.from('links').insert([{ title: 'New Secret Resource', url: 'https://', code: code, order: Date.now() }]);
-            refreshLinks();
-            showToast("Created with Auto-Code: " + code);
+            const { data, error } = await client.from('links').insert([{ title: 'New Resource', url: 'https://', code: code, order: Date.now() }]).select();
+            if (!error) { refreshLinks(); showToast("Created! Don't forget to SAVE changes."); }
         }
 
         async function killLink(id) {
