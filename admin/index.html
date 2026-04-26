@@ -8,11 +8,13 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --orange: #FF6B35; --navy: #0A1929; --navy-light: #152238; --white: #FFFFFF; }
-        body { background-color: var(--navy); color: var(--white); font-family: 'Inter', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+        body { background-color: var(--navy); color: var(--white); font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; margin: 0; min-height: 100vh; }
         .card { background: var(--navy-light); padding: 40px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
         .input { width: 100%; background: #0d1b2a; border: 1px solid #2a3e52; color: white; padding: 12px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
-        .btn { background: var(--orange); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 700; cursor: pointer; }
-        #dashboard { display: none; width: 90%; max-width: 1000px; align-self: flex-start; margin-top: 50px; }
+        .btn { background: var(--orange); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #ff8555; }
+        #dashboard { display: none; width: 90%; max-width: 900px; padding: 40px 0; }
+        .item-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -21,101 +23,96 @@
         <h2 style="margin-bottom: 30px;">Security Portal</h2>
         <input type="email" id="email" class="input" placeholder="Email">
         <input type="password" id="password" class="input" placeholder="Password">
-        <button id="signin-btn" class="btn" onclick="handleLogin()">Sign In</button>
-        <p id="error-msg" style="color: #ff4a4a; display: none; margin-top: 15px; font-size: 0.9rem;"></p>
+        <button id="signin-btn" class="btn" onclick="handleLoginFlow()">Sign In</button>
+        <p id="error-msg" style="color: #ff4a4a; display: none; margin-top: 15px; font-size: 0.8rem;"></p>
     </div>
 
     <div id="dashboard">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-            <h1>🛡️ Link Control</h1>
-            <button class="btn" style="width: auto; background: none; border: 1px solid #ff4a4a; color: #ff4a4a;" onclick="handleLogout()">Logout</button>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 30px; align-items: center;">
+            <h1>🛡️ Hub Control</h1>
+            <button class="btn" style="width: auto; background: none; border: 1px solid #ff4a4a; color: #ff4a4a;" onclick="handleLogOut()">Logout</button>
         </div>
-        <div class="card" style="max-width: 100%; text-align: left;">
-            <div id="links-list"></div>
-            <button class="btn" onclick="addNewLink()" style="background: transparent; border: 1px solid var(--orange); margin-top: 20px;">+ Add New Link</button>
-        </div>
+        <div id="links-list" class="card" style="max-width: 100%; text-align: left;"></div>
+        <button class="btn" onclick="addNewLinkItem()" style="background: transparent; border: 1px solid var(--orange); margin-top: 20px;">+ Add New Link</button>
     </div>
 
     <script>
-        const SUPABASE_URL = "https://ezsziemqkrktxurdxqbl.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6c3ppZW1xa3JrdHh1cmR4cWJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNzg3NjgsImV4cCI6MjA5Mjc1NDc2OH0.pAjwSSdbpRzkqKALgg7q_XFT1-8aHLmp0kEljfy1RV0";
-        
-        let supabase;
+        (function() {
+            const S_URL = "https://ezsziemqkrktxurdxqbl.supabase.co";
+            const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6c3ppZW1xa3JrdHh1cmR4cWJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNzg3NjgsImV4cCI6MjA5Mjc1NDc2OH0.pAjwSSdbpRzkqKALgg7q_XFT1-8aHLmp0kEljfy1RV0";
+            
+            let client;
 
-        // Initialize only when library is ready
-        window.addEventListener('load', () => {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                checkUser();
-            } else {
-                console.error("Supabase library failed to load");
+            window.addEventListener('load', () => {
+                if (window.supabase) {
+                    client = window.supabase.createClient(S_URL, S_KEY);
+                    checkSession();
+                }
+            });
+
+            async function checkSession() {
+                const { data: { session } } = await client.auth.getSession();
+                updateDisplay(!!session);
             }
-        });
 
-        async function checkUser() {
-            const { data: { session } } = await supabase.auth.getSession();
-            toggleUI(!!session);
-        }
+            window.handleLoginFlow = async () => {
+                const btn = document.getElementById('signin-btn');
+                const err = document.getElementById('error-msg');
+                const e = document.getElementById('email').value;
+                const p = document.getElementById('password').value;
 
-        async function handleLogin() {
-            const btn = document.getElementById('signin-btn');
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const err = document.getElementById('error-msg');
+                btn.innerText = "Connecting...";
+                err.style.display = 'none';
 
-            btn.innerText = "Processing...";
-            err.style.display = 'none';
+                try {
+                    const { error } = await client.auth.signInWithPassword({ email: e, password: p });
+                    if (error) throw error;
+                    checkSession();
+                } catch (errObj) {
+                    err.innerText = errObj.message;
+                    err.style.display = 'block';
+                    btn.innerText = "Sign In";
+                }
+            };
 
-            try {
-                const { error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                checkUser();
-            } catch (e) {
-                err.innerText = e.message;
-                err.style.display = 'block';
-                btn.innerText = "Sign In";
+            window.handleLogOut = async () => {
+                await client.auth.signOut();
+                location.reload();
+            };
+
+            function updateDisplay(isLoggedIn) {
+                document.getElementById('login-form').style.display = isLoggedIn ? 'none' : 'block';
+                document.getElementById('dashboard').style.display = isLoggedIn ? 'block' : 'none';
+                document.body.style.alignItems = isLoggedIn ? 'flex-start' : 'center';
+                if (isLoggedIn) fetchAllLinks();
             }
-        }
 
-        async function handleLogout() {
-            await supabase.auth.signOut();
-            location.reload();
-        }
-
-        function toggleUI(isLoggedIn) {
-            document.getElementById('login-form').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('dashboard').style.display = isLoggedIn ? 'block' : 'none';
-            document.body.style.alignItems = isLoggedIn ? 'flex-start' : 'center';
-            if (isLoggedIn) fetchLinks();
-        }
-
-        async function fetchLinks() {
-            const { data } = await supabase.from('links').select('*').order('order', { ascending: true });
-            const list = document.getElementById('links-list');
-            list.innerHTML = data.map(l => `
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <input class="input" value="${l.title}" onchange="updateLink(${l.id}, 'title', this.value)" style="margin:0">
-                    <input class="input" value="${l.url}" onchange="updateLink(${l.id}, 'url', this.value)" style="margin:0">
-                    <button onclick="deleteLink(${l.id})" style="background: none; border: none; cursor: pointer;">🗑️</button>
-                </div>
-            `).join('');
-        }
-
-        async function updateLink(id, field, value) {
-            await supabase.from('links').update({ [field]: value }).eq('id', id);
-        }
-
-        async function addNewLink() {
-            await supabase.from('links').insert([{ title: 'New', url: 'https://', order: Date.now() }]);
-            fetchLinks();
-        }
-
-        async function deleteLink(id) {
-            if(confirm("Delete?")) {
-                await supabase.from('links').delete().eq('id', id);
-                fetchLinks();
+            async function fetchAllLinks() {
+                const { data } = await client.from('links').select('*').order('order', { ascending: true });
+                const list = document.getElementById('links-list');
+                list.innerHTML = data.length ? data.map(l => `
+                    <div class="item-row">
+                        <input class="input" value="${l.title}" onchange="updateLinkRow(${l.id}, 'title', this.value)" style="margin:0">
+                        <input class="input" value="${l.url}" onchange="updateLinkRow(${l.id}, 'url', this.value)" style="margin:0">
+                        <button onclick="deleteLinkRow(${l.id})" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">🗑️</button>
+                    </div>
+                `).join('') : '<p style="color: #888;">No links yet. Click Add New.</p>';
             }
-        }
+
+            window.updateLinkRow = async (id, f, v) => await client.from('links').update({ [f]: v }).eq('id', id);
+            
+            window.addNewLinkItem = async () => {
+                await client.from('links').insert([{ title: 'New', url: 'https://', order: Date.now() }]);
+                fetchAllLinks();
+            };
+
+            window.deleteLinkRow = async (id) => {
+                if(confirm("Confirm Delete?")) {
+                    await client.from('links').delete().eq('id', id);
+                    fetchAllLinks();
+                }
+            };
+        })();
     </script>
 </body>
 </html>
