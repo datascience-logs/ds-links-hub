@@ -97,7 +97,11 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const { error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) document.getElementById('error-msg').style.display = 'block';
+            if (error) {
+                const errEl = document.getElementById('error-msg');
+                errEl.innerText = "Error: " + error.message;
+                errEl.style.display = 'block';
+            }
         }
 
         async function handleLogout() {
