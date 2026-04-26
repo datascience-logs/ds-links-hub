@@ -1,83 +1,94 @@
-// Supabase Credentials
-const S_URL = "https://ezsziemqkrktxurdxqbl.supabase.co";
-const S_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6c3ppZW1xa3JrdHh1cmR4cWJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNzg3NjgsImV4cCI6MjA5Mjc1NDc2OH0.pAjwSSdbpRzkqKALgg7q_XFT1-8aHLmp0kEljfy1RV0";
+/* 
+   ================================================================
+   DIARIES HUB - CORE ENGINE (PRO MAX)
+   ================================================================
+*/
 
-// Robust Launcher
 (function() {
-    let client;
-    const elements = {
-        loading: () => document.getElementById('loading'),
-        error: () => document.getElementById('error'),
+    "use strict";
+
+    // 1. UNIQUE CREDENTIALS
+    const HUB_API_URL = "https://ezsziemqkrktxurdxqbl.supabase.co";
+    const HUB_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6c3ppZW1xa3JrdHh1cmR4cWJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNzg3NjgsImV4cCI6MjA5Mjc1NDc2OH0.pAjwSSdbpRzkqKALgg7q_XFT1-8aHLmp0kEljfy1RV0";
+    
+    let hubClient = null;
+
+    const dom = {
+        load: () => document.getElementById('loading'),
+        err: () => document.getElementById('error'),
         empty: () => document.getElementById('empty'),
-        container: () => document.getElementById('links-container')
+        box: () => document.getElementById('links-container')
     };
 
-    async function start() {
+    // 2. INITIALIZATION
+    async function init() {
         console.log("Hub: Launching system...");
         
-        // Wait for Supabase
-        let timer = 0;
-        while (!window.supabase && timer < 40) {
+        // Wait for library
+        let tryCount = 0;
+        while (!window.supabase && tryCount < 50) {
             await new Promise(r => setTimeout(r, 100));
-            timer++;
+            tryCount++;
         }
 
         if (!window.supabase) {
-            fail("Database library failed to load. Check your internet.");
+            showFail("Database library timeout. Please refresh.");
             return;
         }
 
         try {
-            client = window.supabase.createClient(S_URL, S_KEY);
-            const { data: links, error } = await client.from('links').select('*').order('order', { ascending: true });
+            // Use unique client name
+            hubClient = window.supabase.createClient(HUB_API_URL, HUB_API_KEY);
+            const { data, error } = await hubClient.from('links').select('*').order('order', { ascending: true });
             
             if (error) throw error;
             
-            if (elements.loading()) elements.loading().style.display = 'none';
+            if (dom.load()) dom.load().style.display = 'none';
 
-            if (!links || links.length === 0) {
-                if (elements.empty()) elements.empty().hidden = false;
+            if (!data || data.length === 0) {
+                if (dom.empty()) dom.empty().hidden = false;
             } else {
-                render(links);
+                renderAll(data);
             }
         } catch (e) {
             console.error(e);
-            fail(e.message);
+            showFail(e.message);
         }
     }
 
-    function render(links) {
-        const cont = elements.container();
-        // Remove only previous buttons
-        const old = cont.querySelectorAll('.link-btn');
-        old.forEach(o => o.remove());
+    // 3. RENDER ENGINE
+    function renderAll(links) {
+        const container = dom.box();
+        const existing = container.querySelectorAll('.link-btn');
+        existing.forEach(e => e.remove());
 
         links.forEach((l, i) => {
-            const a = document.createElement('a');
-            a.href = l.url;
-            a.target = "_blank";
-            a.className = "link-btn animate-in";
-            a.style.animationDelay = `${i * 100}ms`;
-            a.innerHTML = `
+            const btn = document.createElement('a');
+            btn.href = l.url;
+            btn.target = "_blank";
+            btn.className = "link-btn animate-in";
+            btn.style.animationDelay = `${i * 100}ms`;
+            btn.innerHTML = `
                 <div class="link-icon">🔗</div>
                 <div class="link-text"><span class="link-title">${l.title}</span></div>
                 <div class="link-arrow">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
             `;
-            cont.appendChild(a);
+            container.appendChild(btn);
         });
     }
 
-    function fail(msg) {
-        if (elements.loading()) elements.loading().style.display = 'none';
-        if (elements.error()) {
-            elements.error().hidden = false;
-            const t = elements.error().querySelector('.error-text');
-            if (t) t.innerText = msg;
+    function showFail(m) {
+        if (dom.load()) dom.load().style.display = 'none';
+        if (dom.err()) {
+            dom.err().hidden = false;
+            const msg = dom.err().querySelector('.error-text');
+            if (msg) msg.innerText = m;
         }
     }
 
-    window.addEventListener('load', start);
-    window.loadLinks = start; // For retry button
+    // Global hook
+    window.addEventListener('load', init);
+    window.forceReloadHub = init;
 })();
