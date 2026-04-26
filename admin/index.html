@@ -3,275 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Hub | Data Science Diaries</title>
+    <title>Master Hub | Admin</title>
     <link rel="stylesheet" href="../css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --orange: #FF6B35;
-            --orange-glow: rgba(255, 107, 53, 0.4);
-            --bg-deep: #050a14;
-            --bg-card: #0f172a;
-            --bg-glass: rgba(15, 23, 42, 0.8);
-            --border: rgba(255, 255, 255, 0.08);
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-            --sidebar-w: 260px;
-        }
-
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            margin: 0;
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* 🔐 LOGIN SCREEN (PRO MAX) */
-        #login-form {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-deep);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .login-card {
-            background: var(--bg-card);
-            padding: 48px;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            border: 1px solid var(--border);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .logo-circle {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 24px;
-            border-radius: 50%;
-            padding: 4px;
-            background: linear-gradient(45deg, var(--orange), #ff9f1c);
-        }
-
+        :root { --orange: #FF6B35; --orange-glow: rgba(255, 107, 53, 0.4); --bg-deep: #050a14; --bg-card: #0f172a; --bg-glass: rgba(15, 23, 42, 0.8); --border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc; --text-dim: #94a3b8; --sidebar-w: 260px; }
+        body { background-color: var(--bg-deep); color: var(--text-main); font-family: 'Inter', sans-serif; margin: 0; display: flex; min-height: 100vh; }
+        #login-form { position: fixed; inset: 0; background: var(--bg-deep); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .login-card { background: var(--bg-card); padding: 48px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .logo-circle { width: 80px; height: 80px; margin: 0 auto 24px; border-radius: 50%; padding: 4px; background: linear-gradient(45deg, var(--orange), #ff9f1c); overflow: hidden; }
         .logo-circle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-
-        /* 📋 DASHBOARD STRUCTURE */
-        #dashboard {
-            display: none;
-            flex: 1;
-            display: flex;
-            width: 100%;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: var(--sidebar-w);
-            background: var(--bg-glass);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 24px;
-            position: fixed;
-            height: 100vh;
-        }
-
+        #dashboard { display: none; flex: 1; width: 100%; }
+        .sidebar { width: var(--sidebar-w); background: var(--bg-glass); backdrop-filter: blur(20px); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px; position: fixed; height: 100vh; }
         .sidebar-brand { font-weight: 800; font-size: 1.2rem; color: var(--orange); margin-bottom: 40px; }
-
-        .nav-item {
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: var(--text-dim);
-            cursor: pointer;
-            margin-bottom: 8px;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255, 107, 53, 0.1);
-            color: var(--orange);
-        }
-
-        /* MAIN CONTENT AREA */
-        .main-view {
-            margin-left: var(--sidebar-w);
-            flex: 1;
-            padding: 40px;
-            max-width: 1200px;
-        }
-
-        .view-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-        }
-
-        /* GLASS CARDS */
-        .glass-card {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 32px;
-            margin-bottom: 24px;
-        }
-
-        /* INPUTS & BUTTONS */
-        .input {
-            width: 100%;
-            background: #0f172a;
-            border: 1px solid var(--border);
-            color: white;
-            padding: 14px 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-            transition: 0.2s;
-        }
-
-        .input:focus {
-            outline: none;
-            border-color: var(--orange);
-            box-shadow: 0 0 0 4px var(--orange-glow);
-        }
-
-        .btn {
-            background: var(--orange);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px var(--orange-glow);
-        }
-
-        .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
-        .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
-
-        /* ITEM ROWS */
-        .link-editor-row {
-            display: grid;
-            grid-template-columns: 2fr 3fr auto;
-            gap: 16px;
-            padding: 20px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 16px;
-            margin-bottom: 16px;
-            align-items: center;
-            border: 1px solid transparent;
-        }
-
-        .link-editor-row:hover { border-color: rgba(255,107,53, 0.2); }
-
-        .trash-btn {
-            color: #ef4444;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
-        }
-
-        .trash-btn:hover { background: rgba(239, 68, 68, 0.1); }
-
-        /* TOAST NOTIFICATION */
-        #toast {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            background: #10b981;
-            color: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            transform: translateY(100px);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 2000;
-        }
-
+        .main-view { margin-left: var(--sidebar-w); flex: 1; padding: 40px; max-width: 1200px; }
+        .glass-card { background: var(--bg-glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 32px; margin-bottom: 24px; }
+        .input { width: 100%; background: #0f172a; border: 1px solid var(--border); color: white; padding: 14px 16px; border-radius: 12px; margin-bottom: 16px; box-sizing: border-box; transition: 0.2s; }
+        .input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 4px var(--orange-glow); }
+        .btn { background: var(--orange); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px var(--orange-glow); }
+        .link-editor-row { display: grid; grid-template-columns: 1.5fr 2fr 1fr auto; gap: 16px; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 16px; margin-bottom: 16px; align-items: center; }
+        .file-label { background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; text-align: center; border: 1px dashed var(--border); }
+        .file-label:hover { border-color: var(--orange); color: var(--orange); }
+        #toast { position: fixed; bottom: 32px; right: 32px; background: #10b981; color: white; padding: 16px 24px; border-radius: 12px; font-weight: 600; transform: translateY(100px); transition: 0.4s; z-index: 2000; }
         #toast.show { transform: translateY(0); }
-
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main-view { margin-left: 0; padding: 20px; }
-        }
     </style>
 </head>
 <body>
 
-    <!-- 🔐 PRO MAX LOGIN FLOW -->
     <div id="login-form">
         <div class="login-card">
-            <div class="logo-circle">
-                <img src="../ds.log.jpg" alt="DS Diaries">
-            </div>
-            <h2 style="margin-bottom: 8px;">Master Hub Access</h2>
-            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 32px;">Secure entry for @datascience.diaries.in</p>
-            
-            <input type="email" id="email" class="input" placeholder="Email Address">
+            <div class="logo-circle"><img src="../ds.log.jpg" alt="DS"></div>
+            <h2 style="margin-bottom: 32px;">Master Hub Access</h2>
+            <input type="email" id="email" class="input" placeholder="Email">
             <input type="password" id="password" class="input" placeholder="Password">
-            
-            <button id="signin-btn" class="btn" style="width: 100%; margin-top: 8px;" onclick="doLogin()">Authorize Access</button>
+            <button id="signin-btn" class="btn" style="width: 100%;" onclick="doLogin()">Authorize</button>
             <p id="error-msg" style="color: #ef4444; margin-top: 16px; font-size: 0.85rem; display: none;"></p>
         </div>
     </div>
 
-    <!-- 📋 CYBERNETIC DASHBOARD -->
-    <div id="dashboard" style="display: none;">
-        <!-- Navigation -->
+    <div id="dashboard">
         <nav class="sidebar">
             <div class="sidebar-brand">Datascience<span>.logs</span></div>
-            <div class="nav-item active">
-                <span>🔗</span> Links Management
-            </div>
-            <div class="nav-item" style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 20px;" onclick="doLogout()">
-                <span>🚪</span> Sign Out
-            </div>
+            <div class="btn" onclick="doLogout()" style="margin-top: auto; background: none; border: 1px solid #ef4444; color: #ef4444; text-align: center;">Sign Out</div>
         </nav>
 
-        <!-- Main Workspace -->
         <main class="main-view">
-            <div class="view-header">
-                <div>
-                    <h1 style="margin: 0; font-size: 1.8rem;">Links Command Center</h1>
-                    <p style="color: var(--text-dim); margin: 4px 0 0;">Manage your dynamic Instagram hub assets</p>
-                </div>
-                <button class="btn" style="background: transparent; border: 1px solid var(--orange);" onclick="createNewLink()">+ Create New Link</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                <h1>Command Center</h1>
+                <button class="btn" onclick="createNewLink()">+ Create New Link</button>
             </div>
-
-            <div class="glass-card">
-                <div id="links-container-admin">
-                    <!-- Links injected here -->
-                </div>
-            </div>
+            <div class="glass-card" id="links-container-admin"></div>
         </main>
     </div>
 
-    <!-- Feedback -->
-    <div id="toast">Successfully saved!</div>
+    <div id="toast">Saved!</div>
 
     <script>
         const SUPABASE_URL = "https://ezsziemqkrktxurdxqbl.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6c3ppZW1xa3JrdHh1cmR4cWJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNzg3NjgsImV4cCI6MjA5Mjc1NDc2OH0.pAjwSSdbpRzkqKALgg7q_XFT1-8aHLmp0kEljfy1RV0";
-        
         let client;
 
         window.addEventListener('load', () => {
@@ -283,27 +73,22 @@
 
         async function checkAuth() {
             const { data: { session } } = await client.auth.getSession();
-            updateUILayout(!!session);
+            if (session) {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'flex';
+                refreshLinks();
+            }
         }
 
         async function doLogin() {
-            const btn = document.getElementById('signin-btn');
-            const err = document.getElementById('error-msg');
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-
-            btn.innerText = "Authenticating...";
-            err.style.display = 'none';
-
-            try {
-                const { error } = await client.auth.signInWithPassword({ email, password: pass });
-                if (error) throw error;
-                checkAuth();
-            } catch (e) {
-                err.innerText = e.message;
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            const { error } = await client.auth.signInWithPassword({ email: e, password: p });
+            if (error) {
+                const err = document.getElementById('error-msg');
+                err.innerText = error.message;
                 err.style.display = 'block';
-                btn.innerText = "Authorize Access";
-            }
+            } else { location.reload(); }
         }
 
         async function doLogout() {
@@ -311,54 +96,49 @@
             location.reload();
         }
 
-        function updateUILayout(isAuth) {
-            document.getElementById('login-form').style.display = isAuth ? 'none' : 'flex';
-            document.getElementById('dashboard').style.display = isAuth ? 'flex' : 'none';
-            if (isAuth) refreshLinksAdmin();
-        }
-
-        async function refreshLinksAdmin() {
-            const { data, error } = await client.from('links').select('*').order('order', { ascending: true });
+        async function refreshLinks() {
+            const { data } = await client.from('links').select('*').order('order', { ascending: true });
             const list = document.getElementById('links-container-admin');
-            
-            if (data.length === 0) {
-                list.innerHTML = `<p style="text-align: center; color: var(--text-dim); padding: 40px;">No links found. Click "Create New Link" to start.</p>`;
-                return;
-            }
-
-            list.innerHTML = data.map((l, i) => `
+            list.innerHTML = data.map(l => `
                 <div class="link-editor-row">
+                    <input class="input" value="${l.title}" onchange="updateLink(${l.id}, 'title', this.value)" style="margin:0">
+                    <input class="input" id="url-${l.id}" value="${l.url}" onchange="updateLink(${l.id}, 'url', this.value)" style="margin:0">
                     <div>
-                        <label style="font-size: 0.75rem; color: var(--orange); font-weight: 700; text-transform: uppercase;">Title</label>
-                        <input class="input" value="${l.title}" onchange="saveChange(${l.id}, 'title', this.value)" style="margin-top: 4px; margin-bottom: 0;">
+                        <label class="file-label" for="file-${l.id}">📎 PDF</label>
+                        <input type="file" id="file-${l.id}" accept=".pdf" style="display:none" onchange="uploadPDF(${l.id}, this)">
                     </div>
-                    <div>
-                        <label style="font-size: 0.75rem; color: var(--orange); font-weight: 700; text-transform: uppercase;">Destination URL</label>
-                        <input class="input" value="${l.url}" onchange="saveChange(${l.id}, 'url', this.value)" style="margin-top: 4px; margin-bottom: 0;">
-                    </div>
-                    <button class="trash-btn" onclick="killLink(${l.id})" title="Delete Link">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    </button>
+                    <button onclick="killLink(${l.id})" style="color:#ef4444; background:none; border:none; cursor:pointer;">🗑️</button>
                 </div>
             `).join('');
         }
 
-        async function saveChange(id, field, value) {
-            const { error } = await client.from('links').update({ [field]: value }).eq('id', id);
-            if (!error) showToast("Changes saved successfully");
+        async function uploadPDF(id, input) {
+            const file = input.files[0];
+            if (!file) return;
+            showToast("Uploading PDF...");
+            const fileName = `${Date.now()}_${file.name}`;
+            const { data, error } = await client.storage.from('assets').upload(fileName, file);
+            if (error) { alert(error.message); return; }
+            const { data: { publicUrl } } = client.storage.from('assets').getPublicUrl(fileName);
+            await updateLink(id, 'url', publicUrl);
+            document.getElementById(`url-${id}`).value = publicUrl;
+            showToast("PDF Uploaded & Linked!");
+        }
+
+        async function updateLink(id, field, value) {
+            await client.from('links').update({ [field]: value }).eq('id', id);
+            showToast("Saved!");
         }
 
         async function createNewLink() {
-            await client.from('links').insert([{ title: 'New Destination', url: 'https://', order: Date.now() }]);
-            refreshLinksAdmin();
-            showToast("New link slot created");
+            await client.from('links').insert([{ title: 'New PDF/Link', url: 'https://', order: Date.now() }]);
+            refreshLinks();
         }
 
         async function killLink(id) {
-            if(confirm("Permanently delete this link?")) {
+            if(confirm("Delete?")) {
                 await client.from('links').delete().eq('id', id);
-                refreshLinksAdmin();
-                showToast("Link removed");
+                refreshLinks();
             }
         }
 
