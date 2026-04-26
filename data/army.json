@@ -1,17 +1,24 @@
 {
-  "resources": [
+  "army": [
     {
-      "title": "Army Documentation",
-      "url": "https://army.mil/docs",
-      "description": "Official Army documentation and resources",
-      "access_level": "Public",
+      "title": "Tactical Data Sovereignty",
+      "url": "https://example.com/confidential",
+      "description": "Guidelines for secure data handling in field operations",
+      "access_level": "Confidential",
       "isActive": true
     },
     {
-      "title": "Training Materials",
-      "url": "https://army.mil/training",
-      "description": "Military training resources and courses",
+      "title": "Logistics Route Optimization",
+      "url": "https://example.com/restricted",
+      "description": "AI-driven supply chain management resources",
       "access_level": "Restricted",
+      "isActive": true
+    },
+    {
+      "title": "Public Defense Data Hub",
+      "url": "https://example.com/public",
+      "description": "Open-source intelligence gathering tools",
+      "access_level": "Public",
       "isActive": true
     }
   ]

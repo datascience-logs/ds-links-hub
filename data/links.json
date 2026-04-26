@@ -1,18 +1,36 @@
 {
   "links": [
     {
-      "title": "Join Discord",
-      "url": "https://discord.gg/datascience-logs",
-      "description": "Community of learners",
+      "title": "Mastering Python for Data Science",
+      "url": "https://www.python.org/",
+      "description": "Essential libraries and workflows for ML engineers",
+      "icon": "python",
       "isActive": true,
-      "order": 9
+      "order": 1
     },
     {
-      "title": "Contact Me",
-      "url": "mailto:hello@datascience.logs",
-      "description": "Questions? Just reach out",
+      "title": "Advanced SQL Roadmap",
+      "url": "https://www.postgresql.org/",
+      "description": "Complex queries and optimization techniques",
+      "icon": "database",
       "isActive": true,
-      "order": 10
+      "order": 2
+    },
+    {
+      "title": "Machine Learning Lab",
+      "url": "https://scikit-learn.org/",
+      "description": "Open source tools for predictive data analysis",
+      "icon": "github",
+      "isActive": true,
+      "order": 3
+    },
+    {
+      "title": "Data Science Diaries Blog",
+      "url": "https://datascience-logs.github.io/ds-links-hub/",
+      "description": "Weekly deep-dives into data challenges",
+      "icon": "blog",
+      "isActive": true,
+      "order": 4
     }
   ]
 }
