@@ -1,60 +1,26 @@
 {
   "links": [
     {
-      "title": "Mastering Python for Data Science",
-      "url": "https://www.python.org/",
-      "description": "Essential libraries and workflows for ML engineers",
-      "icon": "python",
-      "isActive": true,
-      "order": 1
+      "title": "New",
+      "url": "https://"
     },
     {
-      "title": "Advanced SQL Roadmap",
-      "url": "https://www.postgresql.org/",
-      "description": "Complex queries and optimization techniques",
-      "icon": "database",
-      "isActive": true,
-      "order": 2
+      "title": "New",
+      "url": "https://"
     },
     {
-      "title": "Machine Learning Lab",
-      "url": "https://scikit-learn.org/",
-      "description": "Open source tools for predictive data analysis",
-      "icon": "github",
+      "title": "Join Discord",
+      "url": "https://discord.gg/datascience-logs",
+      "description": "Community of learners",
       "isActive": true,
-      "order": 3
+      "order": 9
     },
     {
-      "title": "Data Science Diaries Blog",
-      "url": "https://datascience-logs.github.io/ds-links-hub/",
-      "description": "Weekly deep-dives into data challenges",
-      "icon": "blog",
+      "title": "Contact Me",
+      "url": "mailto:hello@datascience.logs",
+      "description": "Questions? Just reach out",
       "isActive": true,
-      "order": 4
-    },
-    {
-      "title": "ThreeBlueOneBrown (Deep Learning)",
-      "url": "https://youtube.com/c/3blue1brown",
-      "description": "Visualizing neural networks and complex math",
-      "icon": "youtube",
-      "isActive": true,
-      "order": 5
-    },
-    {
-      "title": "StatQuest (Statistics)",
-      "url": "https://youtube.com/c/joshstarmer",
-      "description": "Making even the hardest concepts easy to understand",
-      "icon": "youtube",
-      "isActive": true,
-      "order": 6
-    },
-    {
-      "title": "Krish Naik (Data Science)",
-      "url": "https://youtube.com/c/krishnaik06",
-      "description": "Practical ML projects and career advice",
-      "icon": "youtube",
-      "isActive": true,
-      "order": 7
+      "order": 10
     }
   ]
 }
