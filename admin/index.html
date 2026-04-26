@@ -14,19 +14,20 @@
         #dashboard { display: none; flex: 1; width: 100%; }
         .sidebar { width: var(--sidebar-w); background: var(--bg-glass); backdrop-filter: blur(20px); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px; position: fixed; height: 100vh; }
         .sidebar-brand { font-weight: 800; font-size: 1.2rem; color: var(--orange); margin-bottom: 40px; }
-        .main-view { margin-left: var(--sidebar-w); flex: 1; padding: 40px; max-width: 1400px; }
+        .main-view { margin-left: var(--sidebar-w); flex: 1; padding: 40px; max-width: 1500px; width: calc(100% - var(--sidebar-w)); }
         .glass-card { background: var(--bg-glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 32px; margin-bottom: 24px; }
         .input { width: 100%; background: #0f172a; border: 1px solid var(--border); color: white; padding: 12px 14px; border-radius: 10px; box-sizing: border-box; transition: 0.2s; font-size: 0.85rem; }
         .input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 4px var(--orange-glow); }
         .btn { background: var(--orange); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px var(--orange-glow); }
-        .link-editor-row { display: grid; grid-template-columns: 1.2fr 1.8fr 0.8fr 0.6fr 0.8fr auto; gap: 10px; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 16px; margin-bottom: 12px; align-items: end; border: 1px solid transparent; }
+        .link-editor-row { display: flex; flex-direction: column; gap: 16px; padding: 24px; background: rgba(255,255,255,0.02); border-radius: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
         .link-editor-row:hover { border-color: rgba(255,107,53, 0.3); }
+        .row-top { display: grid; grid-template-columns: 1.5fr 2fr 0.8fr 0.8fr auto; gap: 16px; align-items: end; }
+        .row-bottom { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end; }
         .field-label { font-size: 0.65rem; color: var(--orange); font-weight: 800; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.05em; }
         #toast { position: fixed; bottom: 32px; right: 32px; background: #10b981; color: white; padding: 16px 24px; border-radius: 12px; font-weight: 600; transform: translateY(100px); transition: 0.4s; z-index: 2000; }
         #toast.show { transform: translateY(0); }
-        .save-btn { background: #10b981; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 0.75rem; transition: 0.2s; }
-        .save-btn:hover { background: #059669; }
+        .save-btn { background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.2s; white-space: nowrap; }
     </style>
 </head>
 <body>
@@ -40,7 +41,6 @@
             <input type="email" id="email" class="input" placeholder="Email">
             <input type="password" id="password" class="input" placeholder="Password" style="margin-top: 10px;">
             <button id="signin-btn" class="btn" style="width: 100%; margin-top: 15px;" onclick="doLogin()">Authorize Access</button>
-            <p id="error-msg" style="color: #ef4444; margin-top: 16px; font-size: 0.85rem; display: none;"></p>
         </div>
     </div>
 
@@ -53,12 +53,12 @@
         <main class="main-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
                 <div>
-                    <h1 style="margin: 0; font-size: 1.8rem;">Command Center</h1>
-                    <p style="color: var(--text-dim); margin-top: 4px;">Manual Save Control Enabled</p>
+                    <h1 style="margin: 0;">Command Center</h1>
+                    <p style="color: var(--text-dim); margin-top: 4px;">Manage Links, Codes, and Descriptions</p>
                 </div>
                 <button class="btn" onclick="createNewLink()">+ Create New Link</button>
             </div>
-            <div class="glass-card" id="links-container-admin"></div>
+            <div id="links-container-admin"></div>
         </main>
     </div>
 
@@ -101,28 +101,36 @@
             const list = document.getElementById('links-container-admin');
             list.innerHTML = data.map(l => `
                 <div class="link-editor-row" id="row-${l.id}">
-                    <div>
-                        <span class="field-label">Title</span>
-                        <input class="input" id="title-${l.id}" value="${l.title || ''}">
-                    </div>
-                    <div>
-                        <span class="field-label">URL</span>
-                        <input class="input" id="url-${l.id}" value="${l.url || ''}">
-                    </div>
-                    <div>
-                        <span class="field-label">Code</span>
-                        <div style="display:flex; gap:4px;">
-                            <input class="input" id="code-${l.id}" value="${l.code || ''}">
-                            <button onclick="magicCode(${l.id})" style="background:rgba(255,107,53,0.1); border:none; padding:8px; border-radius:8px; cursor:pointer;">✨</button>
+                    <div class="row-top">
+                        <div>
+                            <span class="field-label">Card Title</span>
+                            <input class="input" id="title-${l.id}" value="${l.title || ''}" placeholder="e.g. SQL Cheat Sheet">
                         </div>
+                        <div>
+                            <span class="field-label">Target URL</span>
+                            <input class="input" id="url-${l.id}" value="${l.url || ''}" placeholder="https://...">
+                        </div>
+                        <div>
+                            <span class="field-label">Secret Code</span>
+                            <div style="display:flex; gap:4px;">
+                                <input class="input" id="code-${l.id}" value="${l.code || ''}" placeholder="DS_0000">
+                                <button onclick="magicCode(${l.id})" style="background:rgba(255,107,53,0.1); border:none; padding:8px; border-radius:8px; cursor:pointer;">✨</button>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="field-label">Media</span>
+                            <label style="background:rgba(255,255,255,0.05); padding:12px; border-radius:10px; cursor:pointer; font-size:0.65rem; display:block; border:1px dashed var(--border); text-align:center;" for="file-${l.id}">📎 PDF</label>
+                            <input type="file" id="file-${l.id}" accept=".pdf" style="display:none" onchange="uploadPDF(${l.id}, this)">
+                        </div>
+                        <button onclick="killLink(${l.id})" style="color:#ef4444; background:none; border:none; cursor:pointer; padding-bottom:12px;">🗑️</button>
                     </div>
-                    <div>
-                        <span class="field-label">Media</span>
-                        <label style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; cursor:pointer; font-size:0.65rem; display:block; border:1px dashed var(--border); text-align:center;" for="file-${l.id}">📎 PDF</label>
-                        <input type="file" id="file-${l.id}" accept=".pdf" style="display:none" onchange="uploadPDF(${l.id}, this)">
+                    <div class="row-bottom">
+                        <div>
+                            <span class="field-label">Card Description (Brief subtitle for users)</span>
+                            <input class="input" id="desc-${l.id}" value="${l.description || ''}" placeholder="Explain what this link is for...">
+                        </div>
+                        <button class="save-btn" id="btn-${l.id}" onclick="saveRow(${l.id})">💾 VERIFY & SAVE</button>
                     </div>
-                    <button class="save-btn" id="btn-${l.id}" onclick="saveRow(${l.id})">💾 SAVE</button>
-                    <button onclick="killLink(${l.id})" style="color:#ef4444; background:none; border:none; cursor:pointer; padding-bottom:12px;">🗑️</button>
                 </div>
             `).join('');
         }
@@ -132,23 +140,21 @@
             const title = document.getElementById(`title-${id}`).value;
             const url = document.getElementById(`url-${id}`).value;
             const code = document.getElementById(`code-${id}`).value;
+            const description = document.getElementById(`desc-${id}`).value;
             
             btn.innerText = "WAIT...";
-            const { error } = await client.from('links').update({ title, url, code }).eq('id', id);
+            const { error } = await client.from('links').update({ title, url, code, description }).eq('id', id);
             
             if (!error) {
-                btn.innerText = "💾 SAVE";
-                showToast("Confirmed: Link Saved!");
-            } else {
-                alert(error.message);
-                btn.innerText = "ERROR";
-            }
+                btn.innerText = "💾 VERIFY & SAVE";
+                showToast("Live Sync Complete: Link Saved!");
+            } else { alert(error.message); btn.innerText = "ERROR"; }
         }
 
         async function magicCode(id) {
             const newCode = genCode();
             document.getElementById(`code-${id}`).value = newCode;
-            showToast("Magic Code ready. Click SAVE.");
+            showToast("Secret Code Set: " + newCode);
         }
 
         async function uploadPDF(id, input) {
@@ -160,17 +166,16 @@
             if (error) { alert(error.message); return; }
             const { data: { publicUrl } } = client.storage.from('assets').getPublicUrl(fileName);
             document.getElementById(`url-${id}`).value = publicUrl;
-            showToast("PDF Linked. Click SAVE.");
+            showToast("PDF Linked Successfully!");
         }
 
         async function createNewLink() {
-            const code = genCode();
-            const { data, error } = await client.from('links').insert([{ title: 'New Resource', url: 'https://', code: code, order: Date.now() }]).select();
-            if (!error) { refreshLinks(); showToast("Created! Don't forget to SAVE changes."); }
+            const { data, error } = await client.from('links').insert([{ title: 'New Entry', url: 'https://', code: genCode(), order: Date.now() }]).select();
+            if (!error) refreshLinks();
         }
 
         async function killLink(id) {
-            if(confirm("Delete permanently?")) {
+            if(confirm("Delete this entry?")) {
                 await client.from('links').delete().eq('id', id);
                 refreshLinks();
             }
