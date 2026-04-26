@@ -11,19 +11,18 @@
         body { background-color: var(--bg-deep); color: var(--text-main); font-family: 'Inter', sans-serif; margin: 0; display: flex; min-height: 100vh; }
         #login-form { position: fixed; inset: 0; background: var(--bg-deep); display: flex; align-items: center; justify-content: center; z-index: 1000; }
         .login-card { background: var(--bg-card); padding: 48px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .logo-circle { width: 80px; height: 80px; margin: 0 auto 24px; border-radius: 50%; padding: 4px; background: linear-gradient(45deg, var(--orange), #ff9f1c); overflow: hidden; }
         #dashboard { display: none; flex: 1; width: 100%; }
         .sidebar { width: var(--sidebar-w); background: var(--bg-glass); backdrop-filter: blur(20px); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px; position: fixed; height: 100vh; }
         .sidebar-brand { font-weight: 800; font-size: 1.2rem; color: var(--orange); margin-bottom: 40px; }
-        .main-view { margin-left: var(--sidebar-w); flex: 1; padding: 40px; max-width: 1300px; }
+        .main-view { margin-left: var(--sidebar-w); flex: 1; padding: 40px; max-width: 1400px; }
         .glass-card { background: var(--bg-glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 32px; margin-bottom: 24px; }
-        .input { width: 100%; background: #0f172a; border: 1px solid var(--border); color: white; padding: 12px 14px; border-radius: 10px; margin-bottom: 12px; box-sizing: border-box; transition: 0.2s; font-size: 0.85rem; }
+        .input { width: 100%; background: #0f172a; border: 1px solid var(--border); color: white; padding: 12px 14px; border-radius: 10px; box-sizing: border-box; transition: 0.2s; font-size: 0.85rem; }
         .input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 4px var(--orange-glow); }
         .btn { background: var(--orange); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px var(--orange-glow); }
         .link-editor-row { display: grid; grid-template-columns: 1.5fr 2fr 1fr 1fr auto; gap: 12px; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 16px; margin-bottom: 12px; align-items: end; border: 1px solid transparent; }
         .link-editor-row:hover { border-color: rgba(255,107,53, 0.3); }
-        .field-label { font-size: 0.7rem; color: var(--orange); font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 0.05em; }
+        .field-label { font-size: 0.7rem; color: var(--orange); font-weight: 800; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.05em; }
         #toast { position: fixed; bottom: 32px; right: 32px; background: #10b981; color: white; padding: 16px 24px; border-radius: 12px; font-weight: 600; transform: translateY(100px); transition: 0.4s; z-index: 2000; }
         #toast.show { transform: translateY(0); }
     </style>
@@ -37,8 +36,8 @@
             </div>
             <h2 style="margin-bottom: 32px;">Master Hub Access</h2>
             <input type="email" id="email" class="input" placeholder="Email">
-            <input type="password" id="password" class="input" placeholder="Password">
-            <button id="signin-btn" class="btn" style="width: 100%;" onclick="doLogin()">Authorize Access</button>
+            <input type="password" id="password" class="input" placeholder="Password" style="margin-top: 10px;">
+            <button id="signin-btn" class="btn" style="width: 100%; margin-top: 15px;" onclick="doLogin()">Authorize Access</button>
             <p id="error-msg" style="color: #ef4444; margin-top: 16px; font-size: 0.85rem; display: none;"></p>
         </div>
     </div>
@@ -53,7 +52,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
                 <div>
                     <h1 style="margin: 0; font-size: 1.8rem;">Command Center</h1>
-                    <p style="color: var(--text-dim); margin-top: 4px;">Assign Secret Codes to your Hub links</p>
+                    <p style="color: var(--text-dim); margin-top: 4px;">Smart Auto-Generated Secret Codes</p>
                 </div>
                 <button class="btn" onclick="createNewLink()">+ Create New Link</button>
             </div>
@@ -67,6 +66,10 @@
         const SUPABASE_URL = "https://ezsziemqkrktxurdxqbl.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6c3ppZW1xa3JrdHh1cmR4cWJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNzg3NjgsImV4cCI6MjA5Mjc1NDc2OH0.pAjwSSdbpRzkqKALgg7q_XFT1-8aHLmp0kEljfy1RV0";
         let client;
+
+        function genCode() {
+            return "DS_" + Math.floor(1000 + Math.random() * 9000);
+        }
 
         window.addEventListener('load', () => {
             if (window.supabase) {
@@ -107,15 +110,18 @@
                 <div class="link-editor-row">
                     <div>
                         <span class="field-label">Title</span>
-                        <input class="input" value="${l.title || ''}" onchange="updateLink(${l.id}, 'title', this.value)" style="margin:0">
+                        <input class="input" value="${l.title || ''}" onchange="updateLink(${l.id}, 'title', this.value)">
                     </div>
                     <div>
                         <span class="field-label">Destination URL</span>
-                        <input class="input" id="url-${l.id}" value="${l.url || ''}" onchange="updateLink(${l.id}, 'url', this.value)" style="margin:0">
+                        <input class="input" id="url-${l.id}" value="${l.url || ''}" onchange="updateLink(${l.id}, 'url', this.value)">
                     </div>
                     <div>
                         <span class="field-label">Secret Code</span>
-                        <input class="input" value="${l.code || ''}" onchange="updateLink(${l.id}, 'code', this.value)" style="margin:0" placeholder="e.g. PY101">
+                        <div style="display:flex; gap:8px;">
+                            <input class="input" id="code-${l.id}" value="${l.code || ''}" onchange="updateLink(${l.id}, 'code', this.value)">
+                            <button onclick="magicCode(${l.id})" style="background:rgba(255,107,53,0.1); border:none; padding:10px; border-radius:8px; cursor:pointer;" title="Re-generate Code">✨</button>
+                        </div>
                     </div>
                     <div>
                         <span class="field-label">Media</span>
@@ -145,9 +151,18 @@
             showToast("Saved!");
         }
 
+        async function magicCode(id) {
+            const newCode = genCode();
+            await updateLink(id, 'code', newCode);
+            document.getElementById(`code-${id}`).value = newCode;
+            showToast("Magic Code Generated: " + newCode);
+        }
+
         async function createNewLink() {
-            await client.from('links').insert([{ title: 'New Secret Resource', url: 'https://', order: Date.now() }]);
+            const code = genCode();
+            await client.from('links').insert([{ title: 'New Secret Resource', url: 'https://', code: code, order: Date.now() }]);
             refreshLinks();
+            showToast("Created with Auto-Code: " + code);
         }
 
         async function killLink(id) {
