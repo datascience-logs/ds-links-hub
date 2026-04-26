@@ -1,21 +1,6 @@
 {
   "links": [
     {
-      "title": "New",
-      "url": "https://"
-    },
-    {
-      "title": "New",
-      "url": "https://"
-    },
-    {
-      "title": "Join Discord",
-      "url": "https://discord.gg/datascience-logs",
-      "description": "Community of learners",
-      "isActive": true,
-      "order": 9
-    },
-    {
       "title": "Contact Me",
       "url": "mailto:hello@datascience.logs",
       "description": "Questions? Just reach out",
