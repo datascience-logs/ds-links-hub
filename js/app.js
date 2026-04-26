@@ -2,19 +2,19 @@
 const SUPABASE_URL = "https://ezsziemqkrktxurdxqbl.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6c3ppZW1xa3JrdHh1cmR4cWJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxNzg3NjgsImV4cCI6MjA5Mjc1NDc2OH0.pAjwSSdbpRzkqKALgg7q_XFT1-8aHLmp0kEljfy1RV0";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Global instance
+let di_supabase;
 
-// Main Application Logic
 const CONFIG = {
   animationDelay: 100
 };
 
 // UI Elements
 const elements = {
-  container: document.getElementById('links-container'),
-  loading: document.getElementById('loading'),
-  error: document.getElementById('error'),
-  empty: document.getElementById('empty')
+  get container() { return document.getElementById('links-container'); },
+  get loading() { return document.getElementById('loading'); },
+  get error() { return document.getElementById('error'); },
+  get empty() { return document.getElementById('empty'); }
 };
 
 // Icons map
@@ -32,12 +32,21 @@ function getLinkIcon(link) {
 }
 
 async function loadLinks() {
+  if (!di_supabase) {
+    if (window.supabase) {
+      di_supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    } else {
+      setTimeout(loadLinks, 100);
+      return;
+    }
+  }
+
   elements.loading.style.display = 'flex';
-  elements.error.hidden = true;
-  elements.empty.hidden = true;
+  if (elements.error) elements.error.hidden = true;
+  if (elements.empty) elements.empty.hidden = true;
 
   try {
-    const { data: links, error } = await supabase
+    const { data: links, error } = await di_supabase
       .from('links')
       .select('*')
       .order('order', { ascending: true });
@@ -47,18 +56,26 @@ async function loadLinks() {
     elements.loading.style.display = 'none';
 
     if (!links || links.length === 0) {
-      elements.empty.hidden = false;
+      if (elements.empty) elements.empty.hidden = false;
     } else {
       renderLinks(links);
     }
   } catch (err) {
     console.error('Failed to load links:', err);
     elements.loading.style.display = 'none';
-    elements.error.hidden = false;
+    if (elements.error) elements.error.hidden = false;
   }
 }
 
 function renderLinks(links) {
+  // Clear any existing links except loading/empty/error states
+  const children = Array.from(elements.container.children);
+  children.forEach(child => {
+    if (!['loading', 'error', 'empty'].includes(child.id)) {
+      child.remove();
+    }
+  });
+
   links.forEach((link, index) => {
     const btn = document.createElement('a');
     btn.href = link.url;
@@ -86,4 +103,5 @@ function renderLinks(links) {
 }
 
 // Start
-document.addEventListener('DOMContentLoaded', loadLinks);
+window.addEventListener('load', loadLinks);
+window.loadLinks = loadLinks; // For retry button
